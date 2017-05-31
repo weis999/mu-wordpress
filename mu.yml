@@ -13,26 +13,22 @@ environments:
 
     #### The instance type to use for the ECS container instances
     #### (default: t2.micro)
-    instanceType: t2.small
-
-    #### We can't let these be anything other than "1" without establishing
-    #### a shared PHP session management solution
-    #### - Desired number of ECS container instances
-    #### (default 1)
-    #desiredCapacity: 1
-    #### - Max size when scaling up the ECS ASG
-    #### (default: 2)
-    maxSize: 1
+    instanceType: t2.micro
 
 - name: prod
   cluster:
     keyName: mu-wordpress
     instanceType: t2.small
-    #maxSize: 2
 
 ## See https://github.com/stelligent/mu/wiki/Services
 service:
   name: mu-wordpress
+
+  ### The desired number of tasks to run for the service
+  ### (default: 2)
+  ### We can't let this be anything other than "1" without establishing
+  ### a shared PHP session management solution
+  desiredCount: 1
 
   ### The endpoint inside the container to determine if the task is healthy
   ### The default isn't going to be valid under WordPress
@@ -62,7 +58,7 @@ service:
 
     #### Instance class
     #### (default: db.t2.small)
-    #instanceClass: db.t2.medium
+    #instanceClass: db.t2.small
 
   ### Environment variables exposed to the containers running in ECS
   environment:
@@ -70,8 +66,12 @@ service:
     WORDPRESS_DB_PASSWORD: ${DatabaseMasterPassword}
     WORDPRESS_DB_HOST: ${DatabaseEndpointAddress}:${DatabaseEndpointPort}
     WORDPRESS_DB_NAME: ${DatabaseName}
-    #### Define this if you want WP_DEBUG=true in wp-config.php
-    WORDPRESS_DEBUG: 1
+
+    #### Define this for each environment if you want WP_DEBUG=true
+    #### in wp-config.php
+    WORDPRESS_DEBUG:
+      test: 'true'
+      prod: 
 
   ### See https://github.com/stelligent/mu/wiki/Pipelines
   pipeline:

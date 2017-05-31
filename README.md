@@ -6,6 +6,7 @@ Run WordPress on Amazon ECS and RDS with mu
 ## Overview
 
 We can use [mu](https://getmu.io) to:
+
 + customize the official [WordPress Docker image](https://hub.docker.com/r/_/wordpress/),
 + storing a copy in [Amazon's ECR Docker registry](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_Console_Repositories.html),
 + running it in [Amazon's EC2 Container Service](https://aws.amazon.com/ecs/),
@@ -136,8 +137,6 @@ You'll see a table like this:
     | prod        | mu-cluster-prod       | CREATE_COMPLETE     | 2017-05-23 16:23:28 | 0.1.13     |
     +-------------+-----------------------+---------------------+---------------------+------------+
 
-"test" is the environment that is managed in CodePipeline. "prod" is the environment
-
 You can view the details on any of the environments:
 
     mu env show test
@@ -147,6 +146,43 @@ logs from the "test" environment, try these:
 
     mu service logs -f test
     mu env logs -f test
+
+### Initialize WordPress
+
+When your test environment is initialized, you can load the WordPress
+admin installer and get your site started. Find the base URL with:
+
+    mu env show test
+
+You'll see a block at the top that includes "Base URL":
+
+    Environment:    test
+    Cluster Stack:  mu-cluster-test (UPDATE_IN_PROGRESS)
+    VPC Stack:      mu-vpc-test (UPDATE_COMPLETE)
+    Bastion Host:   1.2.3.4
+    Base URL:       http://mu-cl-some-long-uuid.us-west-2.elb.amazonaws.com
+
+Append "/wp-admin" to that and load the URL in your browser:
+
+    http://mu-cl-some-long-uuid.us-west-2.elb.amazonaws.com/wp-admin
+
+Follow the instructions there to set up a WordPress admin user,
+initialize the database, etc.
+
+
+### Update your content
+
+Everything in your repo's `html` directory will be installed in your
+containers. Add files there and they'll end up in `/var/www/html`,
+right alongside WordPress. Want to install persistent plugins?
+Put them in `html/wp-content/plugins`. Want to install a theme?
+Add it to `html/wp-content/themes`.
+
+### Caveat
+
+This is a really simple proof-of-concept for deploying and managing a
+WordPress installation through code. Making it robust is more complex,
+and not within the scope of the basic presentation here.
 
 
 ## FAQ
