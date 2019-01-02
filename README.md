@@ -2,6 +2,8 @@
 
 Run WordPress on Amazon ECS and RDS with mu
 
+This is the samlpe code for Stelligent's blog post, [Mu, WordPress, and You](https://stelligent.com/2017/06/08/wordpress-mu-and-you/).
+
 
 ## Overview
 
